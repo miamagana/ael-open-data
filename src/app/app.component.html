@@ -1,1 +1,7 @@
-<div *ngFor="let data of measures$ | async"></div>
+<div *ngIf="measures" class="container">
+  <app-chart
+    [data]="measures.rain"
+    [label]="'Rain'"
+    [type]="'column'"
+  ></app-chart>
+</div>

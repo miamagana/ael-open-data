@@ -1,26 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Measure } from './models/data.models';
+import { Measures } from './models/data.models';
 import { Observable, map, BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoadDataService {
-  measures$: Observable<Measure[]>;
+  constructor(private readonly http: HttpClient) {}
 
-  constructor(private readonly http: HttpClient) {
-    this.measures$ = new BehaviorSubject<Measure[]>([]);
-  }
-
-  loadData(): Observable<Measure[]> {
+  loadData(): Observable<Measures> {
     return this.http
       .get('/assets/data.csv', { responseType: 'text' })
       .pipe(map((textResult) => this.fromTextToMeasures(textResult)));
   }
 
-  fromTextToMeasures(textResult: string): Measure[] {
-    const results: Measure[] = [];
+  fromTextToMeasures(textResult: string): Measures {
+    const results: Measures = {
+      medusaPresence: [],
+      medusaSpecies: [],
+      rain: [],
+      seaStatus: [],
+      seaTemperature: [],
+      temperature: [],
+      windSpeed: [],
+    };
     const lines = textResult.split('\n');
     const length = lines.length;
     for (let i = 1; i < length; i++) {
@@ -34,18 +38,13 @@ export class LoadDataService {
         medusaSpecies,
         rain,
       ] = lines[i].split(';');
-
-      const parsed: Measure = {
-        timestamp: new Date(timestamp),
-        seaTemperature: parseFloat(seaTemperature),
-        temperature: parseFloat(temperature),
-        windSpeed: parseFloat(windSpeed),
-        seaStatus: parseInt(seaStatus),
-        medusaPresence: parseInt(medusaPresence),
-        medusaSpecies: medusaSpecies?.split(',') || [],
-        rain: parseFloat(rain),
-      };
-      results.push(parsed);
+      const date = new Date(timestamp).getTime();
+      results.seaTemperature.push([date, parseFloat(seaTemperature)]);
+      results.temperature.push([date, parseFloat(temperature)]);
+      results.windSpeed.push([date, parseFloat(windSpeed)]);
+      results.seaStatus.push([date, parseInt(seaStatus)]);
+      results.medusaPresence.push([date, parseInt(medusaPresence)]);
+      results.rain.push([date, parseFloat(rain)]);
     }
     return results;
   }
