@@ -1,7 +1,32 @@
 <div *ngIf="measures" class="container">
   <app-chart
+    [data]="measures.seaStatus"
+    [label]="'Sea Status'"
+    [type]="'line'"
+  ></app-chart>
+  <app-chart
     [data]="measures.rain"
     [label]="'Rain'"
     [type]="'column'"
+  ></app-chart>
+  <app-chart
+    [data]="measures.temperature"
+    [label]="'Temperature'"
+    [type]="'areaspline'"
+  ></app-chart>
+  <app-chart
+    [data]="measures.seaTemperature"
+    [label]="'Sea Temperature'"
+    [type]="'areaspline'"
+  ></app-chart>
+  <app-chart
+    [data]="measures.windSpeed"
+    [label]="'Temperature'"
+    [type]="'areaspline'"
+  ></app-chart>
+  <app-chart
+    [data]="measures.medusaPresence"
+    [label]="'Medusa Presence'"
+    [type]="'area'"
   ></app-chart>
 </div>
